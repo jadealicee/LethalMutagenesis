@@ -1,0 +1,72 @@
+---
+title: "Lethal Mutagenesis"
+author: "Ben Dickins"
+date: "`julia using Dates; today()`"
+description: "A Quarto document with Julia code."
+format: 
+  html:
+    toc: true
+    toc-title: Contents
+    theme: darkly
+    code-fold: true
+    code-tools: true
+    code-tools-position: top
+    code-tools-show: always
+    code-tools-show-copy: true
+    code-tools-show-source: true
+    code-tools-show-execute: true
+    execute:
+      echo: true
+      error: true
+      warning: true
+      output: true
+---
+
+## Julia Code
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+```{julia}
+using Distributions, Plots
+dist = Poisson(1.4)
+data = rand(dist, 1000)
+histogram(data, bins=0:maximum(data), colour="salmon")
+```
+
+## Simulation Setup
+
+Let's prepare our required libraries:
+
+```{julia}
+using Random, Distributions, StatsBase
+using DataFrames, Plots, CSV, Tables
+```
+
+Our physical constants:
+
+```{julia}
+const kt_boltzmann = 0.001987204118 * (273.15 + 37)
+const ΔΔG = Normal(1.0, 1.7)
+```
+
+And our fixed parameters:
+
+```{julia}
+#fixed parameters
+const G = 10 # number_of_genes
+const sim_length = 500 # number of generations 500
+const F = -5.0 # initial_free_energy (of all proteins)
+```
+
+And our variable parameters (some will be modified in the loop):
+
+```{julia}
+U = Poisson(5.0) # mutation_rate - 4.5
+#L will be defined in the loop
+N = 10000 # start_popsize
+K = 10000 # carrying_capacity
+R = 9 # fecundity - 4
+const Rep = 1 #Replicate No.
+const start_fitness = prod([1 / (1 + ℯ^(ΔG/kt_boltzmann)) for ΔG in fill(F, G)])
+
+```
